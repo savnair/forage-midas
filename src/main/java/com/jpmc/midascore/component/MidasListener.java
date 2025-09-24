@@ -1,13 +1,18 @@
 package com.jpmc.midascore.component;
 
 import com.jpmc.midascore.foundation.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MidasListener {
 
-    public MidasListener() {
+    private final DatabaseConduit databaseConduit;
+
+    @Autowired
+    public MidasListener(DatabaseConduit databaseConduit) {
+        this.databaseConduit = databaseConduit;
         System.out.println("MidasListener created!");
     }
 
@@ -16,7 +21,7 @@ public class MidasListener {
        System.out.println("KAFKA LISTENER TRIGGERED!");
        System.out.println("Received transaction: " + transaction);
 
-       int breakpoint = 1;
+       databaseConduit.processTransaction(transaction.getSenderId(), transaction.getRecipientId(), transaction.getAmount());
    }
 
 }
